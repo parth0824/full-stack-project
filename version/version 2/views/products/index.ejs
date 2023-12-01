@@ -1,0 +1,19 @@
+<% layout('layouts/boilerplate') -%> <!-- ejs-mate syntax -->
+
+
+    <div class="row"  >
+        <% for(let product of products){ %>
+            <div class="col-lg-4 mb-3 " >
+                <div class="card shadow-sm mx-auto" style="width: 18rem; ">
+                    <img style="height: 210px; padding: 5px;" src="<%=product.img%>"  class="card-img-top" alt="product img not found" >
+                    <div class="card-body">
+                        <h5 class="card-title"><%=product.name%></h5>
+                        <p class="card-text">₹<%= product.price%></p>
+                        <p class="card-text"><%= product.desc.substring(0,100)%>...</p>
+                        <a href="/products/<%=product._id%>" class="btn btn-info btn-sm ">Details</a>
+                        <a href="#" class="btn btn-info btn-sm ">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            <%}%>
+    </div>
