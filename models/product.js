@@ -1,32 +1,32 @@
 const mongoose = require('mongoose')
 
-const productSchema = new mongoose.Schema ({
-    name:{
-        type:String,
-        trim:true,
-        required:true
+const productSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        trim: true,
+        require: true
     },
-    img:{
-        type:String,
-        trim:true,
-        default:'https://beepeers.com/assets/images/commerces/default-image.jpg'
+    img: {
+        type: String,
+        require: true,
+        default: '/images/defaultProductImg.jpeg'
     },
-    price:{
-        type:Number,
-        min:0
+    price: {
+        type: Number,
+        min: 0,
+        require: true
     },
-    desc:{
-        type:String,
-        trim:true
+    desc: {
+        type: String,
+        trim: true,
+        require: true
     },
-    reviews:[
+    reviews: [
         {
-            type:mongoose.Schema.Types.ObjectId, // it is not a string the type is ObjectId
-            ref:'Review'
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Review'
         }
     ]
 })
-
-const Product = mongoose.model('Product',productSchema)
-
+const Product = mongoose.model('Product', productSchema)
 module.exports = Product

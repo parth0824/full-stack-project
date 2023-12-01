@@ -1,31 +1,16 @@
 const express = require('express')
-const router = express.Router();
-
-const Review = require('../models/review')
+const router = express.Router()
+// connecting the product and the review model
 const Product = require('../models/product')
-
-router.post('/products/:productID/review', async (req, res) => {
-    const { productID } = req.params
-    const product = await Product.findById(productID)
-
-
-    const { rating, comment } = req.body
-    // const review = new Review({rating:rating,comment:comment});
-    const review = new Review({ ...req.body });// new thing -> spread operator -> code sugar :)
-    await review.save() // to save in the database 
-
-    //now we will add review in product array(reviews)
-
-    product.reviews.push(review)
-    await product.save() // to save in the database 
-
-    res.redirect(`/products/${productID}`)
-
-
-})
-
-
-
+const Review = require('../models/review')
+router.post('/products/:id/reviews', async (req, res) => {
+    const { id } = req.params
+    const { rating, comment } = req.body 
+    const product = await Product.findById(id);     
+    const revieww = new Review({ rating, comment }) 
+    product.reviews.push(revieww) 
+    await revieww.save()
+    await product.save()
+    res.redirect(`/products/${id}`)
+}) 
 module.exports = router
-
-
