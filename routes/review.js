@@ -20,5 +20,6 @@ router.post('/products/:id/reviews', validateReview, async (req, res) => {
     } catch (error) {
         res.status(500).render('error', { err: error.message })
     }
+    
 })
 module.exports = router
