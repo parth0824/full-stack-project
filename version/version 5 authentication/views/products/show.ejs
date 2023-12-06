@@ -1,0 +1,91 @@
+<% layout('layouts/boilerplate') -%> <!-- ejs-mate syntax -->
+
+  <div class="row">
+
+    <%- include('../partials/flash')%>
+
+
+
+        <div class="col-lg-6">
+
+          <div class="card" style="width:26rem;">
+            <img src="<%=findproduct.img%>" class="card-img-top" alt="img not found">
+            <div class="card-body">
+              <h5 class="card-title">
+                <%=findproduct.name%>
+              </h5>
+              <p class="card-text">
+                <%=findproduct.desc%>
+              </p>
+              <p class="card-text">₹<%=findproduct.price%>
+              </p>
+              <a href="#" class="btn btn-success">Buy</a>
+              <a href="#" class="btn btn-secondary">Add Cart</a>
+              <a href="/products/<%=findproduct._id%>/edit" class="btn btn-info">Edit</a>
+              <form action="/products/<%=findproduct._id%>?_method=delete" method="post">
+                <button class="btn btn-danger" type="submit">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h1 class="display-4">Leave your review</h1>
+
+          <form action="/products/<%=findproduct._id%>/reviews" method="post">
+
+            <div class="mb-3">
+              <!-- <label class="form-label" for="rating">Rating</label>
+          <input class="form-control" min="0" max="5" type="range" name="rating" id="rating"> -->
+
+              <!-- To use star just copy past this fieldset in place of the above this and go to https://github.com/LunarLogic/starability/tree/master/starability-css and copy the css of your choice and make star.css file and paste the css in that file and last step is to include the star.css file in the project-->
+
+              <fieldset class="starability-basic">
+                <legend>Rating:</legend>
+                <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked
+                  aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="rating" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="rating" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="rating" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="rating" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="rating" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
+            </div>
+
+
+            <div class="mb-3">
+              <label class="form-label" for="desc">Description</label>
+              <textarea class="form-control" name="comment" placeholder="Add your review here" id="desc"
+                rows="5"></textarea>
+            </div>
+            <button class="btn btn-success" type="submit">Add review</button>
+          </form>
+
+          <div class="my-3">
+            <% for(let review of findproduct.reviews) {%>
+              <div class="card">
+                <div class="card-body">
+
+                  <p class="starability-result" data-rating="<%=review.rating%>"> Rated: <%=review.rating%> stars </p>
+
+                  <p class="card-text">
+                    <%= review.comment %>
+                  </p>
+                  <%if(review.createdAt){%>
+                    <p class="text-muted">
+                      <%= review.createdAt.toDateString() %>
+                    </p>
+                    <%}%>
+                      <button class="btn btn-danger btn-sm">Delete</button>
+                </div>
+              </div>
+              <% }%>
+          </div>
+
+
+        </div>
+  </div>
