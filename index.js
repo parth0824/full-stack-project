@@ -40,6 +40,19 @@ app.use((req, res, next) => { // success and error are available to the global l
     next();
 })
 
+/// aut--------------
+//passport
+const User = require('./models/user')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+passport.use(new LocalStrategy(User.authenticate())); // thsi will auth the user 
+// passport middleware 
+app.use(passport.initialize())
+app.use(passport.session())
+//session
+passport.serializeUser(User.serializeUser()) // Generates a function that is used by Passport to serialize users into the session(storing user into the session)
+passport.deserializeUser(User.deserializeUser())// Generates a function that is used by Passport to deserialize users into the session(to remove users form session)
+
 
 
 // connecting the DB
@@ -61,8 +74,10 @@ const seedDB = require('./seed')
 // routes
 const productRoutes = require('./routes/product')
 const reviewRoutes = require('./routes/review')
+const authRoutes = require('./routes/auth')
 app.use(productRoutes) // useing route 
 app.use(reviewRoutes) // useing route 
+app.use(authRoutes) // useing route 
 
 app.listen(port, () => {
     console.log(`Application started at port number ${port}`)
