@@ -5,13 +5,10 @@ const Product = require('../models/product')
 const Review = require('../models/review')
 const { validateReview } = require('../middlewaeServerSidevalidation')
 router.post('/products/:id/reviews', validateReview, async (req, res) => {
-    try {
-
-
+    try { 
         const { id } = req.params
         const { rating, comment } = req.body
         const product = await Product.findById(id);
-
         const revieww = new Review({ rating, comment })
         product.reviews.push(revieww)
         await revieww.save()
@@ -21,6 +18,5 @@ router.post('/products/:id/reviews', validateReview, async (req, res) => {
     } catch (error) {
         res.status(500).render('error', { err: error.message })
     }
-
 })
 module.exports = router

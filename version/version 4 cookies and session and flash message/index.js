@@ -38,10 +38,7 @@ app.use((req, res, next) => { // success and error are available to the global l
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
     next();
-})
-
-
-
+}) 
 // connecting the DB
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://0.0.0.0:27017/shopping-app')
