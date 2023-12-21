@@ -1,26 +1,40 @@
-const express = require('express')
-const router = express.Router()
-// connecting the product and the review model
-const Product = require('../models/product')
-const Review = require('../models/review')
-const { validateReview } = require('../middlewaeServerSidevalidation')
-router.post('/products/:id/reviews', validateReview, async (req, res) => {
+const express = require('express');
+const router = express.Router();
+const Product = require('../models/product');
+const Review = require('../models/review');
+const { isLoggedIn, validateReview } = require('../middleware');
+
+
+router.post('/products/:productid/review', isLoggedIn, validateReview, async (req, res) => {
+
+
     try {
+        const { productid } = req.params;
+        const { rating, comment } = req.body;
 
+        const product = await Product.findById(productid);
 
-        const { id } = req.params
-        const { rating, comment } = req.body
-        const product = await Product.findById(id);
+        const review = new Review({ rating, comment });
 
-        const revieww = new Review({ rating, comment })
-        product.reviews.push(revieww)
-        await revieww.save()
-        await product.save()
-        req.flash('success', 'successfull review is added') // v4 
-        res.redirect(`/products/${id}`)
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
+        // Average Rating Logic
+        const newAverageRating = ((product.avgRating * product.reviews.length) + parseInt(rating)) / (product.reviews.length + 1);
+        product.avgRating = parseFloat(newAverageRating.toFixed(1));
+
+        product.reviews.push(review);
+
+        await review.save();
+        await product.save();
+
+        req.flash('success', 'Added your review successfully!');
+        res.redirect(`/products/${productid}`);
     }
 
-})
-module.exports = router
+    catch (e) {
+        res.status(500).render('error', { err: e.message });
+    }
+
+});
+
+
+
+module.exports = router;

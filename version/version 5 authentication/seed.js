@@ -1,44 +1,66 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Product = require('./models/product');
+
+
+mongoose.connect('mongodb://localhost:27017/shopping-app')
+    .then(() => console.log('DB Connected'))
+    .catch((err) => console.log(err));
+
+
 const products = [
     {
-        name:'iphone',
-        img:"https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-        price:65000,
-        desc:"iPhone is a line of smartphones produced by Apple Inc. that use Apple's own iOS mobile operating system."
+        name: 'Iphone 11',
+        img: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aXBob25lfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        price: 300,
+        desc: "Apple iPhone 11 Pro Max, 64GB, Midnight Green"
     },
     {
-        name:'nike shoes',
-        img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-        price:15000,
-        desc:"NIKE SHOES is a line of smartphones produced by Apple Inc. that use Apple's own iOS mobile operating system."
+        name: 'Nike Shoes',
+        img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8c2hvZXN8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        price: 100,
+        desc: "Apple iPhone 11 Pro Max, 64GB, Midnight Green"
     },
     {
-        name:'watches',
-        img:"https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-        price:25000,
-        desc:"Watch is a line of smartphones produced by Apple Inc. that use Apple's own iOS mobile operating system."
+        name: 'Titan Watch',
+        img: 'https://images.unsplash.com/photo-1609587312208-cea54be969e7?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8d2F0Y2hlc3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        price: 150,
+        desc: "Apple iPhone 11 Pro Max, 64GB, Midnight Green"
     },
     {
-        name:'pen',
-        img:"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-        price:150,
-        desc:"pen is a line of smartphones produced by Apple Inc. that use Apple's own iOS mobile operating system."
+        name: 'Macbook Pro',
+        img: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8bWFjYm9va3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        price: 250,
+        desc: "Apple iPhone 11 Pro Max, 64GB, Midnight Green"
     },
     {
-        name:'macBook',
-        img:"https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-        price:150000,
-        desc:"macbook is a line of smartphones produced by Apple Inc. that use Apple's own iOS mobile operating system."
+        name: 'Drones',
+        img: 'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZHJvbmVzfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        price: 250,
+        desc: "Apple iPhone 11 Pro Max, 64GB, Midnight Green"
     },
-]
-const Product = require('./models/product')
+    {
+        name: 'More Drones',
+        img: 'https://images.unsplash.com/photo-1579829366248-204fe8413f31?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8ZHJvbmVzfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        price: 350,
+        desc: "Apple iPhone 11 Pro Max, 64GB, Midnight Green"
+    },
+    {
+        name: 'Bicycle',
+        img: 'https://images.unsplash.com/photo-1484920274317-87885fcbc504?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YnljaWNsZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        price: 350,
+        desc: "Apple iPhone 11 Pro Max, 64GB, Midnight Green"
+    },
+
+];
+
+
+
 async function seedDB(){
-    try {
-        // await Product.deleteMany({}) 
-        await Product.insertMany(products)
-        console.log(`Data added in the database successfully :)`);
-    } catch (error) {
-        console.log(`An error occure while seeding the data. The error is -> ${error}`)
-    }
+    await Product.deleteMany({});
+    await Product.insertMany(products);
+    console.log('Product Seeded');
 }
-module.exports = seedDB
+ 
+module.exports = seedDB();
+
+

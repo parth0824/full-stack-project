@@ -1,90 +1,99 @@
-const express = require('express')
-const router = express.Router()
-router.use(express.urlencoded({ extended: true }));
+const express = require('express');
+const router = express.Router();
 const Product = require('../models/product');
-const Review = require('../models/review');
-
-const Joi = require('joi')
-const { validateproduct } = require('../middlewaeServerSidevalidation')
+const { validateProduct, isLoggedIn, isSeller, isProductAuthor } = require('../middleware');
 
 router.get('/products', async (req, res) => {
+
     try {
         const products = await Product.find({});
-        res.render('products/index', { products })
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
+        res.render('products/index', { products });
     }
-})
-router.get('/products/new', (req, res) => {
+    catch (e) {
+        res.status(500).render('error', { err: e.message })
+    }
+});
+
+
+router.get('/products/new', isLoggedIn, isSeller, (req, res) => {
+
     try {
-        res.render('products/new')
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
+        res.render('products/new');
     }
-})
-// for validation we are using 'validateproduct' middleware and we are requiring it in this file const { validateproduct } = require('../middleware')
-//                          midware         next midware
-router.post('/products', validateproduct, async (req, res) => { // 
+    catch (e) {
+        res.status(500).render('error', { err: e.message })
+    }
+});
+
+router.post('/products', isLoggedIn, isSeller, validateProduct, async (req, res) => {
+
     try {
-        const { name, img, price, desc } = req.body
-        await Product.create({ name, img, price: parseFloat(price), desc })
-        res.redirect('/products')
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
+        const { name, img, desc, price } = req.body;
+        await Product.create({ name, img, price: parseFloat(price), desc, author: req.user._id });
+        req.flash('success', 'Successfully added a new product!');
+        res.redirect('/products');
     }
-})
+    catch (e) {
+        res.status(500).render('error', { err: e.message })
+    }
+});
+
 router.get('/products/:id', async (req, res) => {
-    try {
-        let { id } = req.params;
-        let findproduct = await Product.findById(id).populate('reviews');//now we are using populate methord to connect the product and reviews model
-        res.render(`products/show`, { findproduct })
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
-    }
-})
-router.get('/products/:id/edit', async (req, res) => {
-    try {
-        let { id } = req.params
-        let findproduct = await Product.findById(id)
-        res.render(`products/edit`, { findproduct })
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
-    }
-})
-router.patch('/products/:id', validateproduct, async (req, res) => { // validateproduct middleware 
-    try {
-        let { id } = req.params
-        let { name, img, price, desc } = req.body
-        await Product.findByIdAndUpdate(id, { name, img, price, desc })
-        res.redirect(`/products/${id}`)
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
-    }
-})
-
-router.delete('/products/:id', async (req, res) => {
-    try {
-        let { id } = req.params
-        // delete all the reviews but thsi is not the good way (but it is right)
-        // let pc = await Product.findById(id)
-        // for(let productID of pc.reviews){  
-        //     await Review.findByIdAndDelete(productID) 
-        // }
-
-        // diff way of deleting the reviews
 
 
-        await Product.findByIdAndDelete(id)
-        res.redirect('/products')
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
-    }
-})
-router.get('/', (req, res) => {
     try {
-        res.send('<h1>Home page</h1>')
-    } catch (error) {
-        res.status(500).render('error', { err: error.message })
+        const { id } = req.params;
+        const product = await Product.findById(id).populate('reviews');
+        res.render('products/show', { product });
     }
-})
-module.exports = router
+    catch (e) {
+        res.status(500).render('error', { err: e.message })
+    }
+});
+
+
+router.get('/products/:id/edit', isLoggedIn, isProductAuthor, async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        const product = await Product.findById(id);
+        res.render('products/edit', { product });
+    }
+    catch (e) {
+        res.status(500).render('error', { err: e.message })
+    }
+});
+
+router.patch('/products/:id', isLoggedIn, isProductAuthor, validateProduct, async (req, res) => {
+
+
+    try {
+        const { id } = req.params;
+        const { name, price, img, desc } = req.body;
+        await Product.findByIdAndUpdate(id, { name, price, desc, img });
+        req.flash('success', 'Edit Your Product Successfully');
+        res.redirect(`/products/${id}`);
+    }
+    catch (e) {
+        req.flash('error', e.message);
+        res.redirect(`/products/${id}/edit`);
+    }
+});
+
+
+router.delete('/products/:id', isLoggedIn, isProductAuthor, async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        await Product.findByIdAndDelete(id);
+        res.redirect('/products');
+    }
+    catch (e) {
+        res.status(500).render('error', { err: e.message })
+    }
+});
+
+
+
+
+module.exports = router;

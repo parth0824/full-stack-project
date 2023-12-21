@@ -2,14 +2,13 @@
 const Joi = require('joi')
 // chking product
 // step 1 to create schema 
-// stemp 2 in middleware.js
+// step 2 in middleware.js
 module.exports.productSchema = Joi.object({
     name: Joi.string().required(),
     img: Joi.string().required(),
     price: Joi.number().min(0).required(),
     desc: Joi.string().required()
 })
-
 // chking review
 module.exports.reviewSchema = Joi.object({
     rating: Joi.number().min(0).max(5).required(),
